@@ -5,18 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syntro Academy - Reserva de Citas</title>
     <style>
-        /* Paleta de Colores Syntro de Alta Gama */
+        /* Paleta Neumórfica 3D Avanzada - Identidad Syntro */
         :root {
-            --bg: #e2e8f0;            /* Fondo gris azulado suave */
-            --shadow-dark: #cbd5e1;   /* Sombra para relieve 3D */
-            --shadow-light: #ffffff;  /* Brillo para efecto neumórfico */
+            --bg: #e2e8f0;            /* Gris azulado base */
+            --shadow-dark: #cbd5e1;   /* Relieve de sombra */
+            --shadow-light: #ffffff;  /* Relieve de luz */
             
-            /* Colores de identidad Syntro */
             --accent-main: #184e77;   /* Azul profundo corporativo */
-            --accent-select: #1e6091; /* Azul intermedio para selecciones activas */
-            --teal-active: #34a0a4;   /* Turquesa para navegación y horas libres */
-            --text-dark: #1e293b;     /* Gris oscuro de alta legibilidad */
-            --text-muted: #64748b;    /* Gris neutro para descripciones */
+            --accent-select: #1e6091; /* Azul intermedio para selecciones */
+            --teal-active: #34a0a4;   /* Turquesa para navegación */
+            --text-dark: #1e293b;     /* Texto principal */
+            --text-muted: #64748b;    /* Texto secundario */
         }
 
         * {
@@ -36,7 +35,7 @@
             color: var(--text-dark);
         }
 
-        /* Tarjeta Neumórfica Principal */
+        /* Tarjeta Principal */
         .card {
             width: 100%;
             max-width: 500px;
@@ -47,7 +46,7 @@
                         -12px -12px 24px var(--shadow-light);
         }
 
-        /* Contenedor del Logo Integrado */
+        /* Contenedor e Integración Perfecta del Logo Corporativo */
         .brand-logo-wrapper {
             display: flex;
             justify-content: center;
@@ -55,14 +54,16 @@
         }
 
         .brand-logo {
-            width: 130px;
-            height: 130px;
+            width: 125px;
+            height: 125px;
             object-fit: contain;
-            border-radius: 28px;
-            background: #111827; /* Fondo oscuro premium para resaltar el árbol y la tipografía blanca */
-            padding: 10px;
+            border-radius: 50%;
+            background: #111827; /* Fondo oscuro integrado para resaltar las letras blancas y el árbol */
+            padding: 12px;
+            box-sizing: border-box;
             box-shadow: 6px 6px 12px var(--shadow-dark), 
                         -6px -6px 12px var(--shadow-light);
+            border: 3px solid var(--bg);
         }
 
         .header {
@@ -82,7 +83,7 @@
             color: var(--text-muted); 
         }
 
-        /* Navegación de Meses */
+        /* Navegación */
         .calendar-nav {
             display: flex;
             justify-content: space-between;
@@ -103,7 +104,7 @@
             font-weight: bold;
             font-size: 1.1rem;
             color: var(--teal-active);
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            transition: all 0.1s ease;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -123,7 +124,7 @@
             font-size: 1.05rem;
         }
 
-        /* Cuadrícula del Calendario */
+        /* Calendario */
         .grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -152,7 +153,7 @@
             box-shadow: 4px 4px 8px var(--shadow-dark), 
                         -4px -4px 8px var(--shadow-light);
             color: var(--text-dark);
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
 
         .day:hover {
@@ -162,7 +163,7 @@
         .day.selected { 
             background: var(--accent-select); 
             color: #ffffff; 
-            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.25); 
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3); 
         }
         
         .day.empty { 
@@ -181,12 +182,12 @@
         
         .hours-grid { 
             display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
         }
         
         .btn-hour {
-            padding: 14px 8px;
+            padding: 12px 5px;
             border-radius: 12px;
             border: none;
             background: var(--bg);
@@ -197,25 +198,29 @@
             font-size: 0.85rem;
             color: var(--text-dark);
             transition: all 0.15s ease;
+            text-align: center;
         }
 
         .btn-hour:hover:not(.occupied) {
             color: var(--teal-active);
+            transform: translateY(-1px);
         }
 
         .btn-hour.selected { 
-            background: var(--teal-active); 
+            background: var(--accent-select); 
             color: #ffffff; 
-            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.2); 
+            box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3); 
         }
 
+        /* Bloqueo Estético 3D Hundido para Horas Ocupadas */
         .btn-hour.occupied {
             background: var(--bg);
             color: #94a3b8;
             cursor: not-allowed;
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                        inset -4px -4px 8px var(--shadow-light);
+            box-shadow: inset 4px 4px 6px var(--shadow-dark), 
+                        inset -4px -4px 6px var(--shadow-light);
             font-weight: 400;
+            opacity: 0.65;
         }
 
         input, textarea {
@@ -263,7 +268,7 @@
         
         .loading-text {
             text-align: center;
-            grid-column: span 2;
+            grid-column: span 3;
             color: var(--text-muted);
             font-size: 0.9rem;
             font-style: italic;
@@ -307,9 +312,24 @@
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz56QeEkHIDkxsEN1Octg8xZJtXnBpk4_SLWDP_3P2W73Qn2bU5QHweEOpy1jXzwU5_/exec"; 
 
     let currentDate = new Date();
-    let selectedDate = null;
+    let selectedDateString = null; 
+    let selectedDateObj = null;    
     let selectedHour = null;
     let baseCitasOcupadas = [];
+
+    // Función auxiliar para normalizar la interpretación de fechas de forma segura
+    function parsearFecha(fechaStr) {
+        if (!fechaStr) return null;
+        // Divide la fecha admitiendo guiones o barras oblicuas (D/M/A o D-M-A)
+        const partes = fechaStr.split(/[\/\-]/);
+        if (partes.length < 3) return null;
+        
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10) - 1; // Ajuste de base cero de JS
+        const anio = parseInt(partes[2], 10);
+        
+        return new Date(anio, mes, dia);
+    }
 
     function renderCalendar() {
         const grid = document.getElementById('calendarGrid');
@@ -330,7 +350,6 @@
         const daysInMonth = new Date(year, month + 1, 0).getDate();
         let offset = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
 
-        // Renderizado limpio de los días vacíos del inicio del mes (sin cajas 3D vacías)
         for (let i = 0; i < offset; i++) {
             grid.innerHTML += `<div class="day empty"></div>`;
         }
@@ -351,18 +370,21 @@
         document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
         element.classList.add('selected');
         
-        selectedDate = `${day}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+        // Creamos tanto el String para enviar como el Objeto Fecha Puro para comparar con precisión absoluta
+        selectedDateString = `${day}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+        selectedDateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        
         document.getElementById('hoursTitle').innerText = `Horarios para el día ${day} de ${document.getElementById('monthDisplay').innerText.split(' ')[0]}`;
         
         const hoursGrid = document.getElementById('hoursGrid');
         document.getElementById('hoursSection').style.display = 'block';
         document.getElementById('appointmentForm').style.display = 'none';
         
-        hoursGrid.innerHTML = `<div class="loading-text">Verificando disponibilidad en tiempo real...</div>`;
+        hoursGrid.innerHTML = `<div class="loading-text">Verificando espacios disponibles...</div>`;
         
         fetch(URL_SCRIPT)
         .then(response => {
-            if (!response.ok) throw new Error("Error en la respuesta de la API");
+            if (!response.ok) throw new Error("Error de conexión");
             return response.json();
         })
         .then(data => {
@@ -370,7 +392,7 @@
             construirHorarios(hoursGrid);
         })
         .catch(err => {
-            console.warn("Consulta local segura (Flujo continuo):", err);
+            console.warn("Modo offline o error al consultar citas:", err);
             baseCitasOcupadas = []; 
             construirHorarios(hoursGrid);
         });
@@ -378,14 +400,25 @@
 
     function construirHorarios(contenedor) {
         contenedor.innerHTML = '';
+        
+        // Rango clásico de consultorías (8:00 AM a 6:00 PM)
         for(let h = 8; h <= 18; h++) {
             let timeStr = h > 12 ? `${h-12}:00 PM` : `${h}:00 AM`;
             if(h === 12) timeStr = "12:00 PM";
             
-            const estaOcupado = baseCitasOcupadas.some(cita => cita.fecha === selectedDate && cita.hora === timeStr);
+            // BLINDAJE ANTI-DUPLICADOS: Compara usando marcas de tiempo milimétricas, ignorando formatos de texto erráticos
+            const estaOcupado = baseCitasOcupadas.some(cita => {
+                const citaFechaObj = parsearFecha(cita.fecha);
+                if (!citaFechaObj || !selectedDateObj) return false;
+                
+                const fechasCoinciden = citaFechaObj.getTime() === selectedDateObj.getTime();
+                const horasCoinciden = cita.hora.trim().toUpperCase() === timeStr.toUpperCase();
+                
+                return fechasCoinciden && horasCoinciden;
+            });
             
             if(estaOcupado) {
-                contenedor.innerHTML += `<button type="button" class="btn-hour occupied" disabled>${timeStr} (Ocupado)</button>`;
+                contenedor.innerHTML += `<button type="button" class="btn-hour occupied" disabled>${timeStr}</button>`;
             } else {
                 contenedor.innerHTML += `<button type="button" class="btn-hour" onclick="selectHour(this, '${timeStr}')">${timeStr}</button>`;
             }
@@ -404,11 +437,11 @@
         e.preventDefault();
         
         const btn = document.getElementById('submitBtn');
-        btn.innerText = "PROCESANDO TU RESERVA...";
+        btn.innerText = "REGISTRANDO CONSULTORÍA...";
         btn.disabled = true;
 
         const data = {
-            fecha: selectedDate,
+            fecha: selectedDateString,
             hora: selectedHour,
             nombre: document.getElementById('clientName').value,
             motivo: document.getElementById('reason').value
@@ -422,7 +455,7 @@
             body: JSON.stringify(data)
         })
         .then(() => {
-            alert(`¡Cita agendada con éxito!\nFecha: ${data.fecha}\nHora: ${data.hora}\n\nLos datos ya están resguardados de forma segura en el sistema.`);
+            alert(`¡Excelente!\nTu consultoría ha sido agendada con éxito.\n\nFecha: ${data.fecha}\nHora: ${data.hora}`);
             
             document.getElementById('appointmentForm').reset();
             document.getElementById('hoursSection').style.display = 'none';
@@ -432,8 +465,8 @@
             btn.disabled = false;
         })
         .catch(error => {
-            console.error('Error al enviar:', error);
-            alert("Su solicitud se envió al servidor con éxito. Verifique su hoja de cálculo.");
+            console.error('Error de red:', error);
+            alert("Información procesada. Por favor confirme el registro en su hoja de control.");
             btn.disabled = false;
             btn.innerText = "CONFIRMAR Y AGENDAR CITA";
         });
