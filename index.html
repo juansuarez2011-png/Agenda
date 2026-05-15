@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syntro Academy - Reserva de Citas</title>
     <style>
-        /* Estilos Estilo Neumórfico 3D */
+        /* Estilos Neumórficos Premium (Mantiene tu diseño original) */
         :root {
             --bg: #e2e8f0;            
             --shadow-dark: #cbd5e1;   
@@ -299,7 +299,7 @@
         
         hoursGrid.innerHTML = `<div class="loading-text">Verificando disponibilidad en tiempo real...</div>`;
         
-        // Hacemos la consulta a Google Sheets antes de pintar las horas
+        // Consultamos a Google Sheets antes de mostrar nada
         fetch(URL_SCRIPT)
         .then(res => res.json())
         .then(data => {
@@ -307,9 +307,9 @@
             construirHorarios(hoursGrid);
         })
         .catch(() => {
-            // BLOQUEO CRÍTICO SI FALLA LA CONEXIÓN (Evita que el usuario registre a ciegas)
+            // MEDIDA DE SEGURIDAD 1: Si falla la conexión, vaciamos el contenedor y bloqueamos
             hoursGrid.innerHTML = '';
-            errorDiv.innerText = "Error de conexión con la base de datos. Seleccione el día nuevamente.";
+            errorDiv.innerText = "Error de conexión con el servidor. Por razones de seguridad, no puede agendar en este momento. Seleccione el día nuevamente para reintentar.";
             errorDiv.style.display = 'block';
             baseCitasOcupadas = [];
         });
@@ -320,6 +320,7 @@
             if(!cita.fecha || !cita.hora) return false;
             const partes = cita.fecha.split('/');
             if(partes.length !== 3) return false;
+            // Normalizamos formatos quitando ceros a la izquierda (ej: "05" pasa a "5")
             const fechaNormalizada = `${parseInt(partes[0],10)}/${parseInt(partes[1],10)}/${partes[2]}`;
             return fechaNormalizada === fechaStr && cita.hora.toUpperCase() === horaStr.toUpperCase();
         });
@@ -352,12 +353,15 @@
     document.getElementById('appointmentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // MURO DE SEGURIDAD EXTREMA: Volvemos a validar la variable local antes de procesar
+        // MEDIDA DE SEGURIDAD 2: Muro de contención estricto antes de enviar
         if (verificarOcupado(selectedDateString, selectedHour)) {
-            alert(`⚠️ Error Crítico: Lo sentimos, el horario de las ${selectedHour} para el día ${selectedDateString} acaba de ser reservado por otro usuario. Por favor, selecciona una hora diferente.`);
+            alert(`⚠️ HORARIO NO DISPONIBLE:\nLo sentimos, el horario de las ${selectedHour} para el día ${selectedDateString} ya se encuentra ocupado o fue reservado hace unos instantes.\n\nEl sistema NO agregará este cliente.`);
+            
+            // Ocultamos el formulario inmediatamente y refrescamos el día
             document.getElementById('appointmentForm').style.display = 'none';
-            selectDay(document.querySelector('.day.selected'), selectedDateString.split('/')[0]);
-            return;
+            const diaSeleccionado = selectedDateString.split('/')[0];
+            selectDay(document.querySelector('.day.selected'), diaSeleccionado);
+            return; // Detiene la ejecución por completo. No se envía nada a Google Sheets.
         }
         
         const btn = document.getElementById('submitBtn');
