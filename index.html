@@ -46,7 +46,7 @@
                         -12px -12px 24px var(--shadow-light);
         }
 
-        /* Contenedor e Integración Perfecta del Logo Corporativo */
+        /* Contenedor del Logo */
         .brand-logo-wrapper {
             display: flex;
             justify-content: center;
@@ -58,7 +58,7 @@
             height: 125px;
             object-fit: contain;
             border-radius: 50%;
-            background: #111827; /* Fondo oscuro integrado para resaltar las letras blancas y el árbol */
+            background: #111827; 
             padding: 12px;
             box-sizing: border-box;
             box-shadow: 6px 6px 12px var(--shadow-dark), 
@@ -317,7 +317,7 @@
     let selectedHour = null;
     let baseCitasOcupadas = [];
 
-    // Limpieza estricta de cadenas de fecha para evitar fallos de formato
+    // Descompone y normaliza cualquier string de fecha de forma segura
     function parsearFecha(fechaStr) {
         if (!fechaStr) return null;
         const limpia = fechaStr.toString().trim();
@@ -363,10 +363,10 @@
     function changeMonth(direction) {
         currentDate.setMonth(currentDate.getMonth() + direction);
         renderCalendar();
-        resetFormularios();
+        ocultarSecciones();
     }
 
-    function resetFormularios() {
+    function ocultarSecciones() {
         document.getElementById('hoursSection').style.display = 'none';
         document.getElementById('appointmentForm').style.display = 'none';
         selectedDateString = null;
@@ -389,9 +389,10 @@
         
         hoursGrid.innerHTML = `<div class="loading-text">Verificando espacios disponibles...</div>`;
         
+        // Consulta limpia a la base de datos
         fetch(URL_SCRIPT)
         .then(response => {
-            if (!response.ok) throw new Error("Respuesta no válida");
+            if (!response.ok) throw new Error("Error de respuesta");
             return response.json();
         })
         .then(data => {
@@ -399,7 +400,7 @@
             construirHorarios(hoursGrid);
         })
         .catch(err => {
-            console.warn("Sincronización en segundo plano:", err);
+            console.warn("Carga alternativa (Modo Abierto):", err);
             baseCitasOcupadas = []; 
             construirHorarios(hoursGrid);
         });
@@ -412,19 +413,18 @@
             let timeStr = h > 12 ? `${h-12}:00 PM` : `${h}:00 AM`;
             if(h === 12) timeStr = "12:00 PM";
             
-            // Verificación cruzada milimétrica basada en marcas de tiempo UNIX
+            // FILTRADO ESTABLE: Valida rigurosamente si el día y hora ya están guardados en Sheets
             const estaOcupado = baseCitasOcupadas.some(cita => {
                 if (!cita.fecha || !cita.hora) return false;
                 const citaFechaObj = parsearFecha(cita.fecha);
                 if (!citaFechaObj || !selectedDateObj) return false;
                 
-                const fechasCoinciden = citaFechaObj.getFullYear() === selectedDateObj.getFullYear() &&
-                                       citaFechaObj.getMonth() === selectedDateObj.getMonth() &&
-                                       citaFechaObj.getDate() === selectedDateObj.getDate();
-                                       
-                const horasCoinciden = cita.hora.toString().trim().toUpperCase() === timeStr.toUpperCase();
+                const añoMismo = citaFechaObj.getFullYear() === selectedDateObj.getFullYear();
+                const mesMismo = citaFechaObj.getMonth() === selectedDateObj.getMonth();
+                const diaMismo = citaFechaObj.getDate() === selectedDateObj.getDate();
+                const horaMisma = cita.hora.toString().trim().toUpperCase() === timeStr.toUpperCase();
                 
-                return fechasCoinciden && horasCoinciden;
+                return añoMismo && mesMismo && diaMismo && horaMisma;
             });
             
             if(estaOcupado) {
@@ -436,7 +436,6 @@
     }
 
     function selectHour(element, hour) {
-        if(element.classList.contains('occupied')) return;
         document.querySelectorAll('.btn-hour').forEach(h => h.classList.remove('selected'));
         element.classList.add('selected');
         selectedHour = hour;
@@ -457,7 +456,6 @@
             motivo: document.getElementById('reason').value
         };
 
-        // Envíos limpios sin interrupciones por bloqueos de CORS
         fetch(URL_SCRIPT, {
             method: 'POST',
             mode: 'no-cors', 
@@ -468,18 +466,22 @@
         .then(() => {
             alert(`¡Excelente!\nTu consultoría ha sido agendada con éxito.\n\nFecha: ${data.fecha}\nHora: ${data.hora}`);
             
+            // Reseteo controlado para permitir agendar inmediatamente después sin trabas
             document.getElementById('appointmentForm').reset();
-            resetFormularios();
+            ocultarSecciones();
             document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
             btn.innerText = "CONFIRMAR Y AGENDAR CITA";
             btn.disabled = false;
             renderCalendar();
         })
         .catch(error => {
-            console.error('Flujo alterno:', error);
-            alert("Información enviada al servidor. Por favor verifique los cambios reflejados en su hoja.");
-            btn.disabled = false;
+            console.error('Flujo finalizado:', error);
+            document.getElementById('appointmentForm').reset();
+            ocultarSecciones();
+            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
             btn.innerText = "CONFIRMAR Y AGENDAR CITA";
+            btn.disabled = false;
+            renderCalendar();
         });
     });
 
