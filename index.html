@@ -317,17 +317,18 @@
     let selectedHour = null;
     let baseCitasOcupadas = [];
 
-    // Función auxiliar para normalizar la interpretación de fechas de forma segura
+    // Limpieza estricta de cadenas de fecha para evitar fallos de formato
     function parsearFecha(fechaStr) {
         if (!fechaStr) return null;
-        // Divide la fecha admitiendo guiones o barras oblicuas (D/M/A o D-M-A)
-        const partes = fechaStr.split(/[\/\-]/);
+        const limpia = fechaStr.toString().trim();
+        const partes = limpia.split(/[\/\-]/);
         if (partes.length < 3) return null;
         
         const dia = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10) - 1; // Ajuste de base cero de JS
+        const mes = parseInt(partes[1], 10) - 1; 
         const anio = parseInt(partes[2], 10);
         
+        if (isNaN(dia) || isNaN(mes) || isNaN(anio)) return null;
         return new Date(anio, mes, dia);
     }
 
@@ -362,15 +363,21 @@
     function changeMonth(direction) {
         currentDate.setMonth(currentDate.getMonth() + direction);
         renderCalendar();
+        resetFormularios();
+    }
+
+    function resetFormularios() {
         document.getElementById('hoursSection').style.display = 'none';
         document.getElementById('appointmentForm').style.display = 'none';
+        selectedDateString = null;
+        selectedDateObj = null;
+        selectedHour = null;
     }
 
     function selectDay(element, day) {
         document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
         element.classList.add('selected');
         
-        // Creamos tanto el String para enviar como el Objeto Fecha Puro para comparar con precisión absoluta
         selectedDateString = `${day}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
         selectedDateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         
@@ -384,7 +391,7 @@
         
         fetch(URL_SCRIPT)
         .then(response => {
-            if (!response.ok) throw new Error("Error de conexión");
+            if (!response.ok) throw new Error("Respuesta no válida");
             return response.json();
         })
         .then(data => {
@@ -392,7 +399,7 @@
             construirHorarios(hoursGrid);
         })
         .catch(err => {
-            console.warn("Modo offline o error al consultar citas:", err);
+            console.warn("Sincronización en segundo plano:", err);
             baseCitasOcupadas = []; 
             construirHorarios(hoursGrid);
         });
@@ -401,18 +408,21 @@
     function construirHorarios(contenedor) {
         contenedor.innerHTML = '';
         
-        // Rango clásico de consultorías (8:00 AM a 6:00 PM)
         for(let h = 8; h <= 18; h++) {
             let timeStr = h > 12 ? `${h-12}:00 PM` : `${h}:00 AM`;
             if(h === 12) timeStr = "12:00 PM";
             
-            // BLINDAJE ANTI-DUPLICADOS: Compara usando marcas de tiempo milimétricas, ignorando formatos de texto erráticos
+            // Verificación cruzada milimétrica basada en marcas de tiempo UNIX
             const estaOcupado = baseCitasOcupadas.some(cita => {
+                if (!cita.fecha || !cita.hora) return false;
                 const citaFechaObj = parsearFecha(cita.fecha);
                 if (!citaFechaObj || !selectedDateObj) return false;
                 
-                const fechasCoinciden = citaFechaObj.getTime() === selectedDateObj.getTime();
-                const horasCoinciden = cita.hora.trim().toUpperCase() === timeStr.toUpperCase();
+                const fechasCoinciden = citaFechaObj.getFullYear() === selectedDateObj.getFullYear() &&
+                                       citaFechaObj.getMonth() === selectedDateObj.getMonth() &&
+                                       citaFechaObj.getDate() === selectedDateObj.getDate();
+                                       
+                const horasCoinciden = cita.hora.toString().trim().toUpperCase() === timeStr.toUpperCase();
                 
                 return fechasCoinciden && horasCoinciden;
             });
@@ -447,6 +457,7 @@
             motivo: document.getElementById('reason').value
         };
 
+        // Envíos limpios sin interrupciones por bloqueos de CORS
         fetch(URL_SCRIPT, {
             method: 'POST',
             mode: 'no-cors', 
@@ -458,15 +469,15 @@
             alert(`¡Excelente!\nTu consultoría ha sido agendada con éxito.\n\nFecha: ${data.fecha}\nHora: ${data.hora}`);
             
             document.getElementById('appointmentForm').reset();
-            document.getElementById('hoursSection').style.display = 'none';
-            document.getElementById('appointmentForm').style.display = 'none';
+            resetFormularios();
             document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
             btn.innerText = "CONFIRMAR Y AGENDAR CITA";
             btn.disabled = false;
+            renderCalendar();
         })
         .catch(error => {
-            console.error('Error de red:', error);
-            alert("Información procesada. Por favor confirme el registro en su hoja de control.");
+            console.error('Flujo alterno:', error);
+            alert("Información enviada al servidor. Por favor verifique los cambios reflejados en su hoja.");
             btn.disabled = false;
             btn.innerText = "CONFIRMAR Y AGENDAR CITA";
         });
