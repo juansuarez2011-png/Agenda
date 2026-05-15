@@ -7,22 +7,17 @@
     <style>
         /* Paleta Neumórfica 3D Avanzada - Identidad Syntro */
         :root {
-            --bg: #e2e8f0;            /* Gris azulado base */
-            --shadow-dark: #cbd5e1;   /* Relieve de sombra */
-            --shadow-light: #ffffff;  /* Relieve de luz */
-            
-            --accent-main: #184e77;   /* Azul profundo corporativo */
-            --accent-select: #1e6091; /* Azul intermedio para selecciones */
-            --teal-active: #34a0a4;   /* Turquesa para navegación */
-            --text-dark: #1e293b;     /* Texto principal */
-            --text-muted: #64748b;    /* Texto secundario */
+            --bg: #e2e8f0;            
+            --shadow-dark: #cbd5e1;   
+            --shadow-light: #ffffff;  
+            --accent-main: #184e77;   
+            --accent-select: #1e6091; 
+            --teal-active: #34a0a4;   
+            --text-dark: #1e293b;     
+            --text-muted: #64748b;    
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg);
@@ -35,18 +30,15 @@
             color: var(--text-dark);
         }
 
-        /* Tarjeta Principal */
         .card {
             width: 100%;
             max-width: 500px;
             background: var(--bg);
             padding: 35px 30px;
             border-radius: 40px;
-            box-shadow: 12px 12px 24px var(--shadow-dark), 
-                        -12px -12px 24px var(--shadow-light);
+            box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
         }
 
-        /* Contenedor del Logo */
         .brand-logo-wrapper {
             display: flex;
             justify-content: center;
@@ -60,30 +52,14 @@
             border-radius: 50%;
             background: #111827; 
             padding: 12px;
-            box-sizing: border-box;
-            box-shadow: 6px 6px 12px var(--shadow-dark), 
-                        -6px -6px 12px var(--shadow-light);
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
             border: 3px solid var(--bg);
         }
 
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 1.6rem; color: var(--accent-main); margin-bottom: 6px; font-weight: 700; }
+        .header p { font-size: 0.9rem; color: var(--text-muted); }
 
-        .header h1 { 
-            font-size: 1.6rem; 
-            color: var(--accent-main); 
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
-        
-        .header p { 
-            font-size: 0.9rem; 
-            color: var(--text-muted); 
-        }
-
-        /* Navegación */
         .calendar-nav {
             display: flex;
             justify-content: space-between;
@@ -98,33 +74,27 @@
             width: 45px;
             height: 45px;
             border-radius: 50%;
-            box-shadow: 4px 4px 8px var(--shadow-dark), 
-                        -4px -4px 8px var(--shadow-light);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
             cursor: pointer;
             font-weight: bold;
             font-size: 1.1rem;
             color: var(--teal-active);
-            transition: all 0.1s ease;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .nav-btn:active {
-            box-shadow: inset 3px 3px 6px var(--shadow-dark), 
-                        inset -3px -3px 6px var(--shadow-light);
-            transform: scale(0.95);
+            box-shadow: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
         }
 
         .month-display {
             font-weight: 700;
             color: var(--accent-main);
             text-transform: uppercase;
-            letter-spacing: 1px;
             font-size: 1.05rem;
         }
 
-        /* Calendario */
         .grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -133,12 +103,7 @@
             margin-bottom: 10px;
         }
 
-        .day-name { 
-            font-size: 0.8rem; 
-            font-weight: 700; 
-            color: var(--accent-main); 
-            margin-bottom: 4px; 
-        }
+        .day-name { font-size: 0.8rem; font-weight: 700; color: var(--accent-main); margin-bottom: 4px; }
 
         .day {
             aspect-ratio: 1;
@@ -150,14 +115,8 @@
             cursor: pointer;
             border: none;
             background: var(--bg);
-            box-shadow: 4px 4px 8px var(--shadow-dark), 
-                        -4px -4px 8px var(--shadow-light);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
             color: var(--text-dark);
-            transition: all 0.15s ease;
-        }
-
-        .day:hover {
-            color: var(--teal-active);
         }
 
         .day.selected { 
@@ -166,13 +125,8 @@
             box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3); 
         }
         
-        .day.empty { 
-            box-shadow: none; 
-            cursor: default; 
-            background: transparent; 
-        }
+        .day.empty { box-shadow: none; cursor: default; background: transparent; }
 
-        /* Horarios y Formulario */
         .hours-section, .form-section { 
             display: none; 
             margin-top: 25px; 
@@ -180,30 +134,19 @@
             padding-top: 20px; 
         }
         
-        .hours-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
-        }
+        .hours-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         
         .btn-hour {
             padding: 12px 5px;
             border-radius: 12px;
             border: none;
             background: var(--bg);
-            box-shadow: 4px 4px 8px var(--shadow-dark), 
-                        -4px -4px 8px var(--shadow-light);
+            box-shadow: 4px 4px 8px var(--shadow-dark), -4px -4px 8px var(--shadow-light);
             cursor: pointer;
             font-weight: 600;
             font-size: 0.85rem;
             color: var(--text-dark);
-            transition: all 0.15s ease;
             text-align: center;
-        }
-
-        .btn-hour:hover:not(.occupied) {
-            color: var(--teal-active);
-            transform: translateY(-1px);
         }
 
         .btn-hour.selected { 
@@ -212,15 +155,14 @@
             box-shadow: inset 3px 3px 6px rgba(0,0,0,0.3); 
         }
 
-        /* Bloqueo Estético 3D Hundido para Horas Ocupadas */
+        /* Diseño de Horas Bloqueadas Inconfundible */
         .btn-hour.occupied {
-            background: var(--bg);
+            background: #cbd5e1;
             color: #94a3b8;
             cursor: not-allowed;
-            box-shadow: inset 4px 4px 6px var(--shadow-dark), 
-                        inset -4px -4px 6px var(--shadow-light);
-            font-weight: 400;
-            opacity: 0.65;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+            text-decoration: line-through;
+            opacity: 0.6;
         }
 
         input, textarea {
@@ -230,12 +172,10 @@
             border: none;
             border-radius: 12px;
             background: var(--bg);
-            box-shadow: inset 4px 4px 8px var(--shadow-dark), 
-                        inset -4px -4px 8px var(--shadow-light);
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
             font-family: inherit;
             color: var(--text-dark);
             outline: none;
-            font-size: 0.9rem;
         }
 
         .submit-btn {
@@ -250,29 +190,14 @@
             box-shadow: 4px 4px 12px var(--shadow-dark);
             cursor: pointer;
             font-size: 1rem;
-            letter-spacing: 0.5px;
-            transition: all 0.2s;
         }
 
-        .submit-btn:active {
-            transform: scale(0.99);
-            box-shadow: 2px 2px 6px var(--shadow-dark);
-        }
-
-        .submit-btn:disabled {
-            background: #cbd5e1;
-            color: #94a3b8;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        
         .loading-text {
             text-align: center;
             grid-column: span 3;
             color: var(--text-muted);
             font-size: 0.9rem;
             font-style: italic;
-            padding: 10px;
         }
     </style>
 </head>
@@ -303,34 +228,19 @@
 
     <form id="appointmentForm" class="form-section">
         <input type="text" id="clientName" placeholder="Nombre Completo" required>
-        <textarea id="reason" placeholder="Escribe detalladamente el motivo de tu consulta..." rows="3" required></textarea>
+        <textarea id="reason" placeholder="Escribe el motivo de tu consulta..." rows="3" required></textarea>
         <button type="submit" id="submitBtn" class="submit-btn">CONFIRMAR Y AGENDAR CITA</button>
     </form>
 </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz56QeEkHIDkxsEN1Octg8xZJtXnBpk4_SLWDP_3P2W73Qn2bU5QHweEOpy1jXzwU5_/exec"; 
+    // REEMPLAZA ESTA URL CON TU NUEVA URL DE IMPLEMENTACIÓN SI CAMBIA
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz1m-BLE8w0oQBJcFivRCECPPa3Ajl5HZpHW_h43yLioV-Bcx10nQZ7K4sWeTcn_apY/exec"; 
 
     let currentDate = new Date();
     let selectedDateString = null; 
-    let selectedDateObj = null;    
     let selectedHour = null;
     let baseCitasOcupadas = [];
-
-    // Descompone y normaliza cualquier string de fecha de forma segura
-    function parsearFecha(fechaStr) {
-        if (!fechaStr) return null;
-        const limpia = fechaStr.toString().trim();
-        const partes = limpia.split(/[\/\-]/);
-        if (partes.length < 3) return null;
-        
-        const dia = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10) - 1; 
-        const anio = parseInt(partes[2], 10);
-        
-        if (isNaN(dia) || isNaN(mes) || isNaN(anio)) return null;
-        return new Date(anio, mes, dia);
-    }
 
     function renderCalendar() {
         const grid = document.getElementById('calendarGrid');
@@ -363,45 +273,33 @@
     function changeMonth(direction) {
         currentDate.setMonth(currentDate.getMonth() + direction);
         renderCalendar();
-        ocultarSecciones();
-    }
-
-    function ocultarSecciones() {
         document.getElementById('hoursSection').style.display = 'none';
         document.getElementById('appointmentForm').style.display = 'none';
-        selectedDateString = null;
-        selectedDateObj = null;
-        selectedHour = null;
     }
 
     function selectDay(element, day) {
         document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
         element.classList.add('selected');
         
+        // Formato unificado exacto: D/M/AAAA sin ceros sobrantes
         selectedDateString = `${day}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
-        selectedDateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
         
         document.getElementById('hoursTitle').innerText = `Horarios para el día ${day} de ${document.getElementById('monthDisplay').innerText.split(' ')[0]}`;
-        
         const hoursGrid = document.getElementById('hoursGrid');
         document.getElementById('hoursSection').style.display = 'block';
         document.getElementById('appointmentForm').style.display = 'none';
         
-        hoursGrid.innerHTML = `<div class="loading-text">Verificando espacios disponibles...</div>`;
+        hoursGrid.innerHTML = `<div class="loading-text">Verificando disponibilidad...</div>`;
         
-        // Consulta limpia a la base de datos
+        // Consultamos la base de datos limpia de Google
         fetch(URL_SCRIPT)
-        .then(response => {
-            if (!response.ok) throw new Error("Error de respuesta");
-            return response.json();
-        })
+        .then(res => res.json())
         .then(data => {
             baseCitasOcupadas = Array.isArray(data) ? data : [];
             construirHorarios(hoursGrid);
         })
-        .catch(err => {
-            console.warn("Carga alternativa (Modo Abierto):", err);
-            baseCitasOcupadas = []; 
+        .catch(() => {
+            baseCitasOcupadas = [];
             construirHorarios(hoursGrid);
         });
     }
@@ -413,18 +311,15 @@
             let timeStr = h > 12 ? `${h-12}:00 PM` : `${h}:00 AM`;
             if(h === 12) timeStr = "12:00 PM";
             
-            // FILTRADO ESTABLE: Valida rigurosamente si el día y hora ya están guardados en Sheets
+            // COMPARACIÓN DIRECTA DE TEXTO SANITIZADO
             const estaOcupado = baseCitasOcupadas.some(cita => {
-                if (!cita.fecha || !cita.hora) return false;
-                const citaFechaObj = parsearFecha(cita.fecha);
-                if (!citaFechaObj || !selectedDateObj) return false;
+                if(!cita.fecha || !cita.hora) return false;
                 
-                const añoMismo = citaFechaObj.getFullYear() === selectedDateObj.getFullYear();
-                const mesMismo = citaFechaObj.getMonth() === selectedDateObj.getMonth();
-                const diaMismo = citaFechaObj.getDate() === selectedDateObj.getDate();
-                const horaMisma = cita.hora.toString().trim().toUpperCase() === timeStr.toUpperCase();
+                // Limpia formatos (ej: transforma 15/05/2026 en 15/5/2026 para comparar de forma idéntica)
+                const partes = cita.fecha.split('/');
+                const fechaNormalizada = `${parseInt(partes[0],10)}/${parseInt(partes[1],10)}/${partes[2]}`;
                 
-                return añoMismo && mesMismo && diaMismo && horaMisma;
+                return fechaNormalizada === selectedDateString && cita.hora.toUpperCase() === timeStr.toUpperCase();
             });
             
             if(estaOcupado) {
@@ -446,7 +341,7 @@
         e.preventDefault();
         
         const btn = document.getElementById('submitBtn');
-        btn.innerText = "REGISTRANDO CONSULTORÍA...";
+        btn.innerText = "PROCESANDO RESERVA...";
         btn.disabled = true;
 
         const data = {
@@ -456,28 +351,19 @@
             motivo: document.getElementById('reason').value
         };
 
+        // Envío directo compatible
         fetch(URL_SCRIPT, {
             method: 'POST',
-            mode: 'no-cors', 
+            mode: 'no-cors',
             cache: 'no-cache',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
         .then(() => {
             alert(`¡Excelente!\nTu consultoría ha sido agendada con éxito.\n\nFecha: ${data.fecha}\nHora: ${data.hora}`);
-            
-            // Reseteo controlado para permitir agendar inmediatamente después sin trabas
             document.getElementById('appointmentForm').reset();
-            ocultarSecciones();
-            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
-            btn.innerText = "CONFIRMAR Y AGENDAR CITA";
-            btn.disabled = false;
-            renderCalendar();
-        })
-        .catch(error => {
-            console.error('Flujo finalizado:', error);
-            document.getElementById('appointmentForm').reset();
-            ocultarSecciones();
+            document.getElementById('hoursSection').style.display = 'none';
+            document.getElementById('appointmentForm').style.display = 'none';
             document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
             btn.innerText = "CONFIRMAR Y AGENDAR CITA";
             btn.disabled = false;
@@ -487,6 +373,5 @@
 
     renderCalendar();
 </script>
-
 </body>
 </html>
