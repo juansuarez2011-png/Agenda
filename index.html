@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syntro Academy - Reserva de Citas</title>
     <style>
-        /* Estilos de Diseño Neumórfico Premium */
         :root {
             --bg: #e2e8f0;            
             --shadow-dark: #cbd5e1;   
@@ -160,7 +159,7 @@
             cursor: not-allowed !important;
             box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1) !important;
             text-decoration: line-through;
-            opacity: 0.6;
+            opacity: 0.5;
         }
 
         input, textarea {
@@ -233,20 +232,28 @@
         <div id="connectionError" class="error-msg" style="display: none;"></div>
     </div>
 
-    <form id="appointmentForm" class="form-section">
-        <input type="text" id="clientName" placeholder="Nombre Completo" required>
-        <textarea id="reason" placeholder="Escribe el motivo de tu consulta..." rows="3" required></textarea>
+    <form id="appointmentForm" class="form-section" method="POST">
+        <input type="hidden" name="fecha" id="hiddenFecha">
+        <input type="hidden" name="hora" id="hiddenHora">
+        <input type="hidden" name="redirect" id="hiddenRedirect">
+
+        <input type="text" name="nombre" id="clientName" placeholder="Nombre Completo" required>
+        <textarea name="motivo" id="reason" placeholder="Escribe el motivo de tu consulta..." rows="3" required></textarea>
         <button type="submit" id="submitBtn" class="submit-btn">CONFIRMAR Y AGENDAR CITA</button>
     </form>
 </div>
 
 <script>
+    // 1. REEMPLAZA ESTA URL CON TU NUEVO ENLACE /exec DE GOOGLE APPS SCRIPT
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz1m-BLE8w0oQBJcFivRCECPPa3Ajl5HZpHW_h43yLioV-Bcx10nQZ7K4sWeTcn_apY/exec"; 
 
     let currentDate = new Date();
     let selectedDateString = null; 
-    let selectedHour = null;
     let baseCitasOcupadas = [];
+
+    // Configuramos automáticamente la URL de destino del formulario y el retorno dinámico
+    document.getElementById('appointmentForm').action = URL_SCRIPT;
+    document.getElementById('hiddenRedirect').value = window.location.href;
 
     function renderCalendar() {
         const grid = document.getElementById('calendarGrid');
@@ -287,7 +294,9 @@
         document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
         element.classList.add('selected');
         
+        // Estándar de fecha unificado (D/M/YYYY) sin ceros iniciales
         selectedDateString = `${day}/${currentDate.getMonth() + 1}/${currentDate.getFullYear()}`;
+        document.getElementById('hiddenFecha').value = selectedDateString;
         
         document.getElementById('hoursTitle').innerText = `Horarios para el día ${day} de ${document.getElementById('monthDisplay').innerText.split(' ')[0]}`;
         const hoursGrid = document.getElementById('hoursGrid');
@@ -299,6 +308,7 @@
         
         hoursGrid.innerHTML = `<div class="loading-text">Verificando disponibilidad en tiempo real...</div>`;
         
+        // Consultamos la base de datos de Google en tiempo real
         fetch(URL_SCRIPT)
         .then(res => res.json())
         .then(data => {
@@ -307,7 +317,7 @@
         })
         .catch(() => {
             hoursGrid.innerHTML = '';
-            errorDiv.innerText = "Error de conexión con el servidor. Por razones de seguridad, no puede agendar en este momento. Seleccione el día nuevamente para reintentar.";
+            errorDiv.innerText = "Error de sincronización. Seleccione el día nuevamente para actualizar.";
             errorDiv.style.display = 'block';
             baseCitasOcupadas = [];
         });
@@ -316,16 +326,22 @@
     function verificarOcupado(fechaStr, horaStr) {
         return baseCitasOcupadas.some(cita => {
             if(!cita.fecha || !cita.hora) return false;
-            const partes = cita.fecha.split('/');
-            if(partes.length !== 3) return false;
-            const fechaNormalizada = `${parseInt(partes[0],10)}/${parseInt(partes[1],10)}/${partes[2]}`;
-            return fechaNormalizada === fechaStr && cita.hora.toUpperCase() === horaStr.toUpperCase();
+            
+            const partesCita = cita.fecha.split('/');
+            if(partesCita.length !== 3) return false;
+            const fechaCitaLimpia = `${parseInt(partesCita[0],10)}/${parseInt(partesCita[1],10)}/${partesCita[2]}`;
+            
+            const partesBuscar = fechaStr.split('/');
+            const fechaBuscarLimpia = `${parseInt(partesBuscar[0],10)}/${parseInt(partesBuscar[1],10)}/${partesBuscar[2]}`;
+            
+            return fechaCitaLimpia === fechaBuscarLimpia && cita.hora.toUpperCase() === horaStr.toUpperCase();
         });
     }
 
     function construirHorarios(contenedor) {
         contenedor.innerHTML = '';
         
+        // Rango de consultorías de 8:00 AM a 6:00 PM
         for(let h = 8; h <= 18; h++) {
             let timeStr = h > 12 ? `${h-12}:00 PM` : `${h}:00 AM`;
             if(h === 12) timeStr = "12:00 PM";
@@ -333,6 +349,7 @@
             const estaOcupado = verificarOcupado(selectedDateString, timeStr);
             
             if(estaOcupado) {
+                // Si la combinación ya existe en la hoja, el botón nace deshabilitado (disabled) y tachado
                 contenedor.innerHTML += `<button type="button" class="btn-hour occupied" disabled>${timeStr}</button>`;
             } else {
                 contenedor.innerHTML += `<button type="button" class="btn-hour" onclick="selectHour(this, '${timeStr}')">${timeStr}</button>`;
@@ -343,49 +360,17 @@
     function selectHour(element, hour) {
         document.querySelectorAll('.btn-hour').forEach(h => h.classList.remove('selected'));
         element.classList.add('selected');
-        selectedHour = hour;
+        
+        // Pasamos el horario seleccionado al formulario oculto
+        document.getElementById('hiddenHora').value = hour;
         document.getElementById('appointmentForm').style.display = 'block';
     }
 
-    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if (verificarOcupado(selectedDateString, selectedHour)) {
-            alert(`⚠️ HORARIO NO DISPONIBLE:\nLo sentimos, el horario de las ${selectedHour} para el día ${selectedDateString} ya se encuentra ocupado.\n\nEl sistema cancelará este envío por seguridad.`);
-            document.getElementById('appointmentForm').style.display = 'none';
-            const diaSeleccionado = selectedDateString.split('/')[0];
-            selectDay(document.querySelector('.day.selected'), diaSeleccionado);
-            return; 
-        }
-        
+    // El botón cambia de estado visual durante la carga para evitar clics dobles compulsivos
+    document.getElementById('appointmentForm').addEventListener('submit', function() {
         const btn = document.getElementById('submitBtn');
-        btn.innerText = "PROCESANDO RESERVA...";
-        btn.disabled = true;
-
-        const data = {
-            fecha: selectedDateString,
-            hora: selectedHour,
-            nombre: document.getElementById('clientName').value,
-            motivo: document.getElementById('reason').value
-        };
-
-        fetch(URL_SCRIPT, {
-            method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => {
-            alert(`¡Excelente!\nTu consultoría ha sido agendada con éxito.\n\nFecha: ${data.fecha}\nHora: ${data.hora}`);
-            document.getElementById('appointmentForm').reset();
-            document.getElementById('hoursSection').style.display = 'none';
-            document.getElementById('appointmentForm').style.display = 'none';
-            document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
-            btn.innerText = "CONFIRMAR Y AGENDAR CITA";
-            btn.disabled = false;
-            renderCalendar();
-        });
+        btn.innerText = "REGISTRANDO EN GOOGLE CALENDAR...";
+        btn.style.opacity = "0.7";
     });
 
     renderCalendar();
