@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syntro Academy - Reserva de Citas</title>
     <style>
-        /* Estilos Estilo Neumórfico 3D Premium */
+        /* Estilos de Diseño Neumórfico Premium */
         :root {
             --bg: #e2e8f0;            
             --shadow-dark: #cbd5e1;   
@@ -241,7 +241,6 @@
 </div>
 
 <script>
-    // REEMPLAZA ESTA URL CON TU MACRO WEB ACTUALIZADA DESDE APPS SCRIPT
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbz56QeEkHIDkxsEN1Octg8xZJtXnBpk4_SLWDP_3P2W73Qn2bU5QHweEOpy1jXzwU5_/exec"; 
 
     let currentDate = new Date();
@@ -300,7 +299,6 @@
         
         hoursGrid.innerHTML = `<div class="loading-text">Verificando disponibilidad en tiempo real...</div>`;
         
-        // Hacemos la consulta a Google Sheets antes de pintar las horas libres
         fetch(URL_SCRIPT)
         .then(res => res.json())
         .then(data => {
@@ -308,7 +306,6 @@
             construirHorarios(hoursGrid);
         })
         .catch(() => {
-            // MEDIDA DE SEGURIDAD 1: Si hay un error de conexión, bloqueamos la asignación de citas libres
             hoursGrid.innerHTML = '';
             errorDiv.innerText = "Error de conexión con el servidor. Por razones de seguridad, no puede agendar en este momento. Seleccione el día nuevamente para reintentar.";
             errorDiv.style.display = 'block';
@@ -353,9 +350,8 @@
     document.getElementById('appointmentForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // MEDIDA DE SEGURIDAD 2: Muro de contención en el navegador previo al envío
         if (verificarOcupado(selectedDateString, selectedHour)) {
-            alert(`⚠️ HORARIO NO DISPONIBLE:\nLo sentimos, el horario de las ${selectedHour} para el día ${selectedDateString} ya se encuentra ocupado o fue reservado hace unos instantes.\n\nEl sistema NO agregará este cliente.`);
+            alert(`⚠️ HORARIO NO DISPONIBLE:\nLo sentimos, el horario de las ${selectedHour} para el día ${selectedDateString} ya se encuentra ocupado.\n\nEl sistema cancelará este envío por seguridad.`);
             document.getElementById('appointmentForm').style.display = 'none';
             const diaSeleccionado = selectedDateString.split('/')[0];
             selectDay(document.querySelector('.day.selected'), diaSeleccionado);
